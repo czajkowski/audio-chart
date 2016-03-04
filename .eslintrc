@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+    "amd": true
+  },
+  "rules": {
+    "no-unused-vars": 2,
+    "camelcase": 2,
+    "key-spacing": 2,
+    "no-shadow": 2,
+    "eol-last": 2,
+    "no-trailing-spaces": 2,
+    "no-multi-spaces": 2,
+    "one-var": [2, "always"],
+    "indent": [2, 4, {"SwitchCase": 1}],
+    "semi": [2, "always"],
+    "space-before-function-paren": [2, "always"],
+    "quotes": [2, "double"],
+    "consistent-this": [2, "self"],
+    "space-in-parens": [2, "never"],
+    "space-infix-ops": 2,
+    "array-bracket-spacing": [2, "never"],
+    "comma-spacing": [2, {"before": false, "after": true}],
+    "no-multiple-empty-lines": 2,
+    "no-spaced-func": 2,
+    "space-before-blocks": 2,
+    "eqeqeq": 1
+  }
+}

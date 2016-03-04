@@ -1,0 +1,12 @@
+# top-most EditorConfig file
+root = true
+
+# newline ending every file
+[*]
+insert_final_newline = true
+
+[*.{js, less, html, json, md}]
+charset = utf-8
+indent_style = space
+trim_trailing_whitespace = true
+indent_size = 4
