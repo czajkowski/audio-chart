@@ -1,3 +1,3 @@
 # audio-chart
 
-http://czajkowski.github.io/audio-chart/
+https://czajkowski.github.io/audio-chart/
