@@ -1,16 +1,6 @@
-/* global $, Uint8Array */
+(async function () {
 
-$(function () {
-
-
-    // fork getUserMedia for multiple browser versions, for those
-    // that need prefixes
-    navigator.getUserMedia = (navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia ||
-        navigator.msGetUserMedia);
-
-    var audioCtx = new(window.AudioContext || window.webkitAudioContext)(),
+    var audioCtx = new AudioContext(),
         analyser = audioCtx.createAnalyser(),
         source,
         canvas = document.querySelector("#visualizer"),
@@ -27,29 +17,23 @@ $(function () {
     analyser.smoothingTimeConstant = 0.85;
     analyser.fftSize = bufferLength;
 
-    if (navigator.getUserMedia) {
-        navigator.getUserMedia(
-            // constraints - only audio needed for this app
-            { audio: true },
-
-            // success callback
-            function (audioStream) {
-                source = audioCtx.createMediaStreamSource(audioStream);
-                source.connect(analyser);
-
-                visualize();
-            },
-
-            // error callback
-            function () {}
-        );
+    try {
+        var audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        await audioCtx.resume();
+        source = audioCtx.createMediaStreamSource(audioStream);
+        source.connect(analyser);
+        visualize();
+    } catch (e) {
+        console.error("Microphone access denied:", e);
+        return;
     }
 
-    function visualize () {
+    function visualize() {
 
         canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+        var frameCount = 0;
 
-        function draw () {
+        function draw() {
             requestAnimationFrame(draw);
 
             var dataArray = new Uint8Array(bufferLength),
@@ -57,10 +41,12 @@ $(function () {
 
             analyser.getByteTimeDomainData(dataArray);
 
-
-            // Remember new data
-            delayBuffer.shift();
-            delayBuffer.push(dataArray);
+            frameCount++;
+            if (frameCount % 8 === 0) {
+                // Remember new data every 4th frame
+                delayBuffer.shift();
+                delayBuffer.push(dataArray);
+            }
 
 
             canvasCtx.fillStyle = "rgb(0, 0, 0)";
@@ -82,7 +68,7 @@ $(function () {
                 for (j = 0; j < bufferLength; j++) {
 
                     v = ((delayBuffer[i] || [])[j] - 128.0) / 128.0;
-                    y = yOffset - v * canvasTopOffset * Math.pow(Math.sin(x / canvasWidth * Math.PI), 3);
+                    y = yOffset - v * canvasTopOffset * 6 * Math.pow(Math.sin(x / canvasWidth * Math.PI), 3);
 
                     if (j === 0) {
                         canvasCtx.moveTo(x, y);
@@ -107,4 +93,4 @@ $(function () {
         requestAnimationFrame(draw);
     }
 
-});
+})();
